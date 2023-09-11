@@ -8,4 +8,8 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "password")
+        fields = "__all__"
+
+
+class LogoutTokenSerializer(serializers.Serializer):
+    token = serializers.CharField(label="token", default=None, required=False)
