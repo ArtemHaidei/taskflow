@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'users.apps.UsersConfig',
     'tasks.apps.TasksConfig'
+    'login.apps.LoginConfig',
 ]
 
 REST_FRAMEWORK = {
