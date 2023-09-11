@@ -54,18 +54,17 @@ class UserLoginView(generics.GenericAPIView):
                         })
 
 
-def post(request):
-    if request.user.is_anonymous:
-        raise NotAuthenticated()
-
-    request.data.get("token", request.auth.key)
-    Token.objects.get(key=request.auth.key).delete()
-
-    return Response(status=status.HTTP_200_OK)
-
-
 class UserLogoutView(generics.GenericAPIView):
     authentication_classes = (TokenAuthentication,)
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     renderer_classes = (renderers.JSONRenderer,)
     serializer_class = LogoutTokenSerializer
+
+    def post(self, request):
+        if request.user.is_anonymous:
+            raise NotAuthenticated()
+
+        request.data.get("token", request.auth.key)
+        Token.objects.get(key=request.auth.key).delete()
+
+        return Response(status=status.HTTP_200_OK)
