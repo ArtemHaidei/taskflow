@@ -16,7 +16,7 @@ class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=TaskStatus.choices, default=TaskStatus.NONE)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.ManyToManyField(Category)
     description = models.TextField(blank=True, null=True)
     if_description = models.BooleanField(default=False)
     is_done = models.BooleanField(default=False)

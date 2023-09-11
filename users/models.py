@@ -38,8 +38,8 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     temp_email = models.EmailField("temporary email", blank=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    nickname = models.CharField(max_length=30, unique=True, null=True)
+    name = models.CharField(max_length=30)
     phone_number = models.CharField("phone", max_length=30, blank=True)
     is_active = models.BooleanField('is_active', default=False)
     is_staff = models.BooleanField('is_staff', default=False)
