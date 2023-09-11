@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from rest_framework import generics
+from login.serializers import AuthUserSerializer
 
-# Create your views here.
+
+class UserLoginView(generics.GenericAPIView):
+    serializer_class = AuthUserSerializer
