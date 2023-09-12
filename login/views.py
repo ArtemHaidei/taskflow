@@ -27,8 +27,8 @@ class UserLoginView(generics.GenericAPIView):
             raise AuthenticationFailed()
 
     @staticmethod
-    def check_if_active(account):
-        if account.is_active is False:
+    def check_is_confirmed(account):
+        if account.is_confirmed is False:
             raise PermissionDenied("User account is not activate.")
 
     @staticmethod
@@ -42,7 +42,7 @@ class UserLoginView(generics.GenericAPIView):
     def post(self, request):
         user = self.validate(request.data)
         self.check_password(request.data.get("password"), user)
-        self.check_if_active(user)
+        self.check_is_confirmed(user)
         token, created = Token.objects.get_or_create(user=user)
         profile = AuthUserSerializer(instance=user, many=False).data
 
