@@ -4,13 +4,13 @@ from users.models import User
 
 
 class UserViewAdmin(UserAdmin):
-    list_display = ("nickname", "email", "is_confirmed",)
+    list_display = ("nickname", "email", "is_active",)
     ordering = ("email", "nickname",)
     search_fields = ("email", "nickname",)
 
     fieldsets = (
         (None, {"fields": (
-            "email", "nickname", "password", "is_confirmed", "is_staff", "is_superuser", "name",)}),
+            "email", "name", "nickname", "password", "is_active", "is_superuser", "is_staff")}),
     )
     add_fieldsets = (
         (None, {
@@ -20,10 +20,9 @@ class UserViewAdmin(UserAdmin):
                 "nickname",
                 "email",
                 "password",
-                "is_confirmed",
                 "is_active",
+                "is_staff"
                 "is_superuser",
-                "is_staff",
             )}
          ),
     )
