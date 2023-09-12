@@ -43,7 +43,7 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-
+# TODO: Add Slate for api documentation
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,9 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    "django_rest_passwordreset",
+    "django_filters",
     'users.apps.UsersConfig',
-    'tasks.apps.TasksConfig'
+    'tasks.apps.TasksConfig',
     'login.apps.LoginConfig',
+    'emailsend.apps.EmailsendConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -158,3 +161,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# TODO: Add Logging
