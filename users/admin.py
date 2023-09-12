@@ -1,23 +1,25 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserViewAdmin(UserAdmin):
-    list_display = ("nickname", "email", "is_active",)
-    ordering = ("email", "nickname",)
-    search_fields = ("email", "nickname",)
+    list_display = ("first_name", "last_name", "email", "is_active",)
+    ordering = ("email",)
+    search_fields = ("email",)
 
     fieldsets = (
         (None, {"fields": (
-            "email", "name", "nickname", "password", "is_active", "is_superuser", "is_staff")}),
+            "email", "first_name", "last_name", "password", "is_active", "is_superuser", "is_staff")}),
     )
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
             "fields": (
-                "name",
-                "nickname",
+                "first_name",
+                "last_name",
                 "email",
                 "password",
                 "is_active",

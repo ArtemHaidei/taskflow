@@ -1,6 +1,9 @@
 from django.db import models
-from users.models import User
 from choiches import TaskPriority, TaskStatus
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Category(models.Model):

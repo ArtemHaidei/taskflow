@@ -1,15 +1,18 @@
-from rest_framework import generics, parsers, renderers, status
 from django.contrib.auth.hashers import check_password
-from login.serializers import AuthUserSerializer
-from users.serializers import UserSerializer
-from rest_framework.exceptions import AuthenticationFailed, ParseError, PermissionDenied
-from users.models import User
+from rest_framework import generics, parsers, renderers, status
+from rest_framework.exceptions import (AuthenticationFailed,
+                                       ParseError,
+                                       PermissionDenied,
+                                       NotAuthenticated)
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import NotAuthenticated
-from login.serializers import LogoutTokenSerializer
+from login.serializers import LogoutTokenSerializer, AuthUserSerializer
+from users.serializers import UserSerializer
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserLoginView(generics.GenericAPIView):
@@ -58,7 +61,8 @@ class UserLogoutView(generics.GenericAPIView):
     renderer_classes = (renderers.JSONRenderer,)
     serializer_class = LogoutTokenSerializer
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         if request.user.is_anonymous:
             raise NotAuthenticated()
 

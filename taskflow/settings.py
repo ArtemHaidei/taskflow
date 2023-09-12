@@ -43,6 +43,8 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
+EMAIL_TOKEN_EXPIRE_TIME = env('EMAIL_TOKEN_EXPIRE_TIME', default=24)
+
 # TODO: Add Slate for api documentation
 # Application definition
 INSTALLED_APPS = [
@@ -84,7 +86,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = 'users.User'
 ROOT_URLCONF = 'taskflow.urls'
 
 TEMPLATES = [
