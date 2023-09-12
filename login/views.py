@@ -1,6 +1,7 @@
 from rest_framework import generics, parsers, renderers, status
 from django.contrib.auth.hashers import check_password
 from login.serializers import AuthUserSerializer
+from users.serializers import UserSerializer
 from rest_framework.exceptions import AuthenticationFailed, ParseError, PermissionDenied
 from users.models import User
 from rest_framework.authtoken.models import Token
@@ -18,8 +19,7 @@ class UserLoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=data)
         if not serializer.is_valid():
             raise ParseError("Invalid data")
-
-        return self.get_user(serializer.validated_data("email"))
+        return self.get_user(serializer.validated_data["email"])
 
     @staticmethod
     def check_password(password, account):
@@ -27,8 +27,8 @@ class UserLoginView(generics.GenericAPIView):
             raise AuthenticationFailed()
 
     @staticmethod
-    def check_is_confirmed(account):
-        if account.is_confirmed is False:
+    def check_is_active(account):
+        if account.is_active is False:
             raise PermissionDenied("User account is not activate.")
 
     @staticmethod
@@ -42,14 +42,12 @@ class UserLoginView(generics.GenericAPIView):
     def post(self, request):
         user = self.validate(request.data)
         self.check_password(request.data.get("password"), user)
-        self.check_is_confirmed(user)
+        self.check_is_active(user)
         token, created = Token.objects.get_or_create(user=user)
-        profile = AuthUserSerializer(instance=user, many=False).data
 
         return Response(status=status.HTTP_200_OK,
                         data={
-                            "user": AuthUserSerializer(instance=user, many=False).data,
-                            "profile": profile,
+                            "user": UserSerializer(instance=user, many=False).data,
                             "token": token.key
                         })
 
