@@ -42,12 +42,12 @@ class EmailSender:
         token = self.create_jwt_token(user)
         verify_url = reverse('user-verify-email') + f'?token={token}'
 
-        subject = f"Please, {user.first_name}, verify your email address"
-        message = (f"Please verify your email address clicking the link below:\n\n"
-                   f"{verify_url} \n\n"
-                   "Best regards,\n"
-                   "TaskFlow Team\n"
+        subject = f"Please, verify your email address"
+        message = (f'Hello, {user.first_name} {user.last_name}!\n'
+                   f'Please verify your email address clicking the link below:\n\n'
+                   f'http://{settings.ALLOWED_HOSTS[0]}{verify_url} \n\n'
+                   'Best regards,\n'
+                   'TaskFlow Team\n'
                    )
-        recipient_list = [user.temp_email]
 
-        return self.send(subject=subject, message=message, recipient_list=recipient_list)
+        return self.send(subject=subject, message=message, recipient_list=[user.email])
