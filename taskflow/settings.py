@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-BASE_URL = env('BASE_URL')
+BASE_URL = env('BASE_URL', default="http://localhost:8000")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')

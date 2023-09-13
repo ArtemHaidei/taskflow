@@ -70,7 +70,6 @@ class UserVerifyEmailView(generics.GenericAPIView):
     @staticmethod
     def get(request):
         jwt_token = request.GET.get("token")
-
         decoded_data = decode_jwt_token(jwt_token).get("decoded_data", None)
 
         if not decoded_data:
@@ -89,7 +88,6 @@ class UserResetPasswordView(generics.GenericAPIView):
     @staticmethod
     def post(request):
         jwt_token = request.GET.get("token")
-
         decoded_data = decode_jwt_token(jwt_token).get("decoded_data", None)
 
         if not decoded_data:
