@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.exceptions import ParseError
@@ -25,7 +26,7 @@ class UserCreateView(generics.CreateAPIView):
                         status=status.HTTP_201_CREATED)
 
 
-class UserDetailView(generics.RetrieveAPIView):
+class UserDetailUpdateView(UpdateModelMixin, RetrieveModelMixin, generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
@@ -33,7 +34,22 @@ class UserDetailView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(instance=user)
-        return Response(data={'user': serializer.data}, status=status.HTTP_200_OK)
+        return Response(data={'detail': f'User {user} detail.',
+                              'user': serializer.data},
+                        status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(instance=user, data=request.data)
+        if not serializer.is_valid():
+            raise ParseError("Invalid data")
+        serializer.save()
+        return Response(data={'detail': f'User {user} update successful!',
+                              'user': serializer.data},
+                        status=status.HTTP_200_OK)
 
 
 class UserDeleteView(generics.DestroyAPIView):
