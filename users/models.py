@@ -66,3 +66,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             print("Error sending verification email for ", self.email)
 
+    def send_reset_password_email(self):
+        response = EmailSender().send_reset_password_email(self.pk)
+        if response:
+            print("Reset password email for ", self.email)
+            print(response)
+        else:
+            print("Error sending reset password email for ", self.email)

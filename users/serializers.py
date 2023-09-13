@@ -10,6 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ("password", )
+
+
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 

@@ -3,6 +3,7 @@ import jwt
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
+from emailsend.utils import build_absolute_url
 from django.utils import timezone
 from datetime import timedelta
 from users.utils import get_user_by_pk
@@ -40,12 +41,28 @@ class EmailSender:
         user = get_user_by_pk(pk=pk)
 
         token = self.create_jwt_token(user)
-        verify_url = reverse('user-verify-email') + f'?token={token}'
+        verify_url = build_absolute_url(reverse=reverse('user-verify-email') + f'?token={token}')
 
         subject = f"Please, verify your email address"
         message = (f'Hello, {user.first_name} {user.last_name}!\n'
                    f'Please verify your email address clicking the link below:\n\n'
-                   f'http://{settings.ALLOWED_HOSTS[0]}{verify_url} \n\n'
+                   f'{verify_url} \n\n'
+                   'Best regards,\n'
+                   'TaskFlow Team\n'
+                   )
+
+        return self.send(subject=subject, message=message, recipient_list=[user.email])
+
+    def send_reset_password_email(self, pk):
+        user = get_user_by_pk(pk=pk)
+
+        token = self.create_jwt_token(user)
+        reset_url = build_absolute_url(reverse=reverse('user-reset-password') + f'?token={token}')
+
+        subject = f"Reset password"
+        message = (f'Hello, {user.first_name} {user.last_name}!\n'
+                   f'Following the link below to reset password:\n\n'
+                   f'{reset_url} \n\n'
                    'Best regards,\n'
                    'TaskFlow Team\n'
                    )
