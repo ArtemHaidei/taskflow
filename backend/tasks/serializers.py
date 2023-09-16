@@ -6,10 +6,29 @@ from .models import Task, Category
 
 # TODO: Validators
 class CategorySerializer(serializers.ModelSerializer):
-    deadline_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
+        fields = '__all__'
+
+
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        exclude = ('id', 'user')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        category = Category.objects.create(user=user, **validated_data)
+        return category
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    deadline_at = serializers.SerializerMethodField()
+    categories = CategorySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Task
         fields = '__all__'
 
     @staticmethod
@@ -20,20 +39,6 @@ class CategorySerializer(serializers.ModelSerializer):
         return time_delta
 
 
-class CategoryCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        exclude = ('id', 'user')
-
-
-class TaskSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Task
-        fields = '__all__'
-
-
 class TaskCreateSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True)
 
@@ -41,11 +46,11 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         model = Task
         exclude = ('id', 'user')
 
-    # def create(self, validated_data):
-    #     user = self.context['request'].user
-    #     categories_data = validated_data.pop('categories')
-    #     task = Task.objects.create(user=user, **validated_data)
-    #     for category_data in categories_data:
-    #         category, created = Category.objects.get_or_create(name=category_data['name'], defaults={'user': user})
-    #         task.categories.add(category)
-    #     return task
+    def create(self, validated_data):
+        user = self.context['request'].user
+        categories_data = validated_data.pop('categories')
+        task = Task.objects.create(user=user, **validated_data)
+        for category_data in categories_data:
+            category, _ = Category.objects.get_or_create(name=category_data['name'], defaults={'user': user})
+            task.categories.add(category)
+        return task

@@ -16,13 +16,13 @@ class EmailSender:
             from_email = settings.DEFAULT_FROM_EMAIL
 
         try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=from_email,
-                recipient_list=recipient_list,
-                fail_silently=False,  # Change to True if you do not want errors to be displayed in the console
-            )
+            # send_mail(
+            #     subject=subject,
+            #     message=message,
+            #     from_email=from_email,
+            #     recipient_list=recipient_list,
+            #     fail_silently=False,  # Change to True if you do not want errors to be displayed in the console
+            # )
             return message
         except Exception as e:
             # TODO: Add logging here

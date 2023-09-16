@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from tasks.models import Task, Category
 from tasks.serializers import (TaskSerializer,
                                CategorySerializer,
-                               TaskCreateSerializer)
+                               TaskCreateSerializer,
+                               CategoryCreateSerializer)
 
 
 class TasksListView(generics.ListAPIView):
@@ -15,9 +16,6 @@ class TasksListView(generics.ListAPIView):
 class TaskCreateView(generics.CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskCreateSerializer
-
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
 
 
 class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -31,7 +29,8 @@ class CategoriesListView(generics.ListAPIView):
 
 
 class CategoryCreateView(generics.CreateAPIView):
-    pass
+    queryset = Category.objects.all()
+    serializer_class = CategoryCreateSerializer
 
 
 class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
