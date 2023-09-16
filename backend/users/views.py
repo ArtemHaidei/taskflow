@@ -1,6 +1,5 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.exceptions import ParseError
 
 from users.serializers import CreateUserSerializer, UserSerializer, UserEmailPasswordSerializer
 from users.utils import get_user_by_email, decode_jwt_token
@@ -24,6 +23,7 @@ class UserDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
 
+# TODO: Implement UserVerifyEmailView and UserResetPasswordView
 class UserVerifyEmailView(generics.GenericAPIView):
     @staticmethod
     def get(request):
