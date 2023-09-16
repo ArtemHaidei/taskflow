@@ -44,7 +44,7 @@ class EmailSender:
         verify_url = build_absolute_url(reverse=reverse('user-verify-email') + f'?token={token}')
 
         subject = f"Please, verify your email address"
-        message = (f'Hello, {user.first_name} {user.last_name}!\n'
+        message = (f'Hello, {user.name}!\n'
                    f'Please verify your email address clicking the link below:\n\n'
                    f'{verify_url} \n\n'
                    'Best regards,\n'
@@ -60,7 +60,7 @@ class EmailSender:
         reset_url = build_absolute_url(reverse=reverse('user-reset-password') + f'?token={token}')
 
         subject = f"Reset password"
-        message = (f'Hello, {user.first_name} {user.last_name}!\n'
+        message = (f'Hello, {user.name}!\n'
                    f'Following the link below to reset password:\n\n'
                    f'{reset_url} \n\n'
                    'Best regards,\n'

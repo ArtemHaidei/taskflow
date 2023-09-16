@@ -1,9 +1,10 @@
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 
 
 class AuthUserSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=250, required=True)
-    password = serializers.CharField(max_length=250, required=True)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
 
 
 class LogoutTokenSerializer(serializers.Serializer):
