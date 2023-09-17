@@ -57,8 +57,8 @@ class UserLoginView(generics.GenericAPIView):
 
 class UserLogoutView(generics.GenericAPIView):
     authentication_classes = (TokenAuthentication,)
-    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
-    renderer_classes = (renderers.JSONRenderer,)
+    # parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+    # renderer_classes = (renderers.JSONRenderer,)
     serializer_class = LogoutTokenSerializer
 
     @staticmethod

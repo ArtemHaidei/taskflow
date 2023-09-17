@@ -1,5 +1,4 @@
 from rest_framework import generics, status
-from rest_framework.response import Response
 
 from tasks.models import Task, Category
 from tasks.serializers import (TaskSerializer,

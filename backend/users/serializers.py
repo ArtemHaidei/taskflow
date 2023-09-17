@@ -17,11 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password',)
 
 
-class UserEmailPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
-
-
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -29,10 +24,8 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("name", 'email', 'password')
 
-    def save(self, **kwargs):
-        user = User.objects.create_user(
-            name=self.validated_data['name'],
-            email=self.validated_data['email'],
-            password=self.validated_data['password'],
-        )
-        user.send_verify_email()
+
+class UserEmailPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+
