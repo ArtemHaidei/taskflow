@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-class AuthUserSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+class AuthUserSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields['email'] = serializers.EmailField(required=True)
 
 
 class LogoutTokenSerializer(serializers.Serializer):

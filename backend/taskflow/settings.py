@@ -10,11 +10,13 @@ import os
 
 import environ
 
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Take environment variables from .env file
-env = environ.Env(DEBUG=(bool, False))
+env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 BASE_URL = env('BASE_URL', default="http://localhost:8000")
@@ -23,7 +25,7 @@ BASE_URL = env('BASE_URL', default="http://localhost:8000")
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', default=False)
+DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default="*").split(",")
 
@@ -38,7 +40,7 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 EMAIL_TOKEN_EXPIRE_TIME = env('EMAIL_TOKEN_EXPIRE_TIME', default=24)
 
-# TODO: Add Slate for api documentation
+# TODO: Add Slate for api documentation or drf-yasg
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     "django_filters",
     'users.apps.UsersConfig',
     'tasks.apps.TasksConfig',
@@ -62,7 +64,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     "DEFAULT_PARSER_CLASSES": (
         "rest_framework.parsers.JSONParser",
@@ -83,6 +85,45 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'users.User'
 ROOT_URLCONF = 'taskflow.urls'
 
+# Simple JWT settings
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env.int('ACCESS_TOKEN_LIFETIME')),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=env.int('REFRESH_TOKEN_LIFETIME')),
+    "ROTATE_REFRESH_TOKENS": env.bool('ROTATE_REFRESH_TOKENS'),
+    "BLACKLIST_AFTER_ROTATION": env.bool('BLACKLIST_AFTER_ROTATION'),
+    "UPDATE_LAST_LOGIN": env.bool('UPDATE_LAST_LOGIN'),
+
+    "ALGORITHM": env('ALGORITHM'),
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": env('VERIFYING_KEY'),
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JSON_ENCODER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+
+    "AUTH_TOKEN_CLASSES": (
+                            "rest_framework_simplejwt.tokens.AccessToken",
+                            'rest_framework_simplejwt.tokens.RefreshToken'
+                            ),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "users.models.User",
+
+    "JTI_CLAIM": "jti",
+
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+}
+
+# TEMPLATES settings
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -101,7 +142,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taskflow.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -115,7 +155,6 @@ DATABASES = {
         "PORT": env("SQL_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -135,7 +174,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -146,7 +184,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

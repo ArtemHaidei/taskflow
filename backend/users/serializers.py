@@ -14,7 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('password',)
+        # exclude = ('password', 'is_active', 'is_staff', 'is_superuser')
+        # exclude = ('password',)
+        fields = '__all__'
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -23,6 +25,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("name", 'email', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['email'], validated_data['password'])
+        user.name = validated_data['name']
+        user.save()
+        return user
 
 
 class UserEmailPasswordSerializer(serializers.Serializer):
