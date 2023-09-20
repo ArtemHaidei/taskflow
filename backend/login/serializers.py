@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -10,4 +9,4 @@ class AuthUserSerializer(TokenObtainPairSerializer):
 
 
 class LogoutTokenSerializer(serializers.Serializer):
-    token = serializers.CharField(label="token", default=None, required=False)
+    token = serializers.CharField(label="token")
