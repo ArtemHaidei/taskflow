@@ -85,6 +85,11 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'users.User'
 ROOT_URLCONF = 'taskflow.urls'
 
+# REDIS settings
+REDIS_PASSWORD = env('REDIS_PASSWORD')
+LOCAL_REDIS_HOST = env('LOCAL_REDIS_HOST')
+REDIS_PORT = env.int('REDIS_PORT')
+
 # Simple JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env.int('ACCESS_TOKEN_LIFETIME')),
