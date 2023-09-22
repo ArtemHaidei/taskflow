@@ -12,17 +12,17 @@ class BlacklistMixin:
     Redis is used as a database for storing tokens.
     """
     payload: Dict[str, Any]
-    redis_db = RedisConnectionDB(db=settings.REDIS_TOKENS_DB)
 
-    def verify(self, *args, **kwargs) -> None:
+    def verify(self) -> None:
         self.check_blacklist()
 
     def check_blacklist(self) -> None:
         """
         Verifies whether this token exists in the token blacklist and raises a TokenError if it does.
         """
+        client = RedisConnectionDB(db=getattr(settings, 'REDIS_TOKENS_DB', 0))
         jti = self.payload[settings.SIMPLE_JWT["JTI_CLAIM"]]
-        if self.redis_db.check_jti(jti):
+        if client.check_jti(jti):
             raise TokenError("Token is in blacklist")
 
     def blacklist(self) -> None:
@@ -30,13 +30,14 @@ class BlacklistMixin:
         Verifies the token's absence from the blacklist; if found, a TokenError is raised.
         Otherwise, the token is added to the blacklist.
         """
+        client = RedisConnectionDB(db=getattr(settings, 'REDIS_TOKENS_DB', 0))
         jti = self.payload[settings.JTI_CLAIM]
         exp = self.payload["exp"]
 
-        if self.redis_db.check_jti(jti):
+        if client.check_jti(jti):
             raise TokenError("Token is in blacklist")
 
-        self.redis_db.setex_jti(jti, exp, self.payload["user_id"])
+        client.setex_jti(jti, exp, self.payload["user_id"])
 
 
 class RefreshToken(BlacklistMixin, Token):

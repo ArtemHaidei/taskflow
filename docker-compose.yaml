@@ -1,5 +1,5 @@
 services:
-  redis:
+  redis-taskflow:
     image: "redis:7.0"
     container_name: "redis-taskflow"
     ports:
@@ -11,16 +11,7 @@ services:
     env_file:
       - ./backend/.env
 
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local-redis:redis:${REDIS_PORT}
-    ports:
-      - "127.0.0.1:8081:8081"
-    env_file:
-      - ./backend/.env
-
-  backend:
+  backend-taskflow:
     image: backend-taskflow:dev
     build:
       context: ./backend
@@ -29,11 +20,12 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - $(pwd)/backend:/backend:ro
+      - /Users/artemhaidei/Desktop/TaskFlow/taskflow/backend:/backend:ro
+    command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - ./backend/.env
     depends_on:
-      - redis
+      - redis-taskflow
 
 volumes:
   redis-data:
