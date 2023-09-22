@@ -89,13 +89,12 @@ ROOT_URLCONF = 'taskflow.urls'
 REDIS_PASSWORD = env('REDIS_PASSWORD')
 LOCAL_REDIS_HOST = env('LOCAL_REDIS_HOST')
 REDIS_PORT = env.int('REDIS_PORT')
+REDIS_TOKENS_DB = env.int('REDIS_TOKENS_DB')
 
 # Simple JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env.int('ACCESS_TOKEN_LIFETIME')),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=env.int('REFRESH_TOKEN_LIFETIME')),
-    "ROTATE_REFRESH_TOKENS": env.bool('ROTATE_REFRESH_TOKENS'),
-    "BLACKLIST_AFTER_ROTATION": env.bool('BLACKLIST_AFTER_ROTATION'),
     "UPDATE_LAST_LOGIN": env.bool('UPDATE_LAST_LOGIN'),
 
     "ALGORITHM": env('ALGORITHM'),
@@ -115,17 +114,12 @@ SIMPLE_JWT = {
 
     "AUTH_TOKEN_CLASSES": (
                             "rest_framework_simplejwt.tokens.AccessToken",
-                            'rest_framework_simplejwt.tokens.RefreshToken'
+                            'taskflow.custom_refresh_token.RefreshToken'
                             ),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "users.models.User",
 
     "JTI_CLAIM": "jti",
-
-    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
-    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
-    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
 }
 
 # TEMPLATES settings

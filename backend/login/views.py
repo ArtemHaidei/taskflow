@@ -1,32 +1,57 @@
+import time
+
 from rest_framework import generics, status
-from rest_framework.exceptions import NotAuthenticated
-from rest_framework.authtoken.models import Token
+from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from login.serializers import LogoutTokenSerializer, AuthUserSerializer
+from login.serializers import TokenVerifySerializer, AuthUserTokenPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.conf import settings
+from taskflow.redis_db import RedisConnectionDB
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 
-class UserLoginView(TokenObtainPairView):
-    serializer_class = AuthUserSerializer
+class UserLoginTokenPairView(TokenObtainPairView):
+    serializer_class = AuthUserTokenPairSerializer
 
 
 class UserLogoutView(generics.GenericAPIView):
-    authentication_classes = (TokenAuthentication,)
-    # parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
-    # renderer_classes = (renderers.JSONRenderer,)
-    serializer_class = LogoutTokenSerializer
+    permission_classes = (IsAuthenticated,)
+    serializer_class = TokenVerifySerializer
 
-    @staticmethod
-    def post(request):
-        if request.user.is_anonymous:
-            raise NotAuthenticated()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.redis_db = RedisConnectionDB(db=getattr(settings, 'REDIS_TOKENS_DB', 0))
 
-        request.data.get("token", request.auth.key)
-        Token.objects.get(key=request.auth.key).delete()
+    def add_to_blacklist(self, token):
+        current_time = int(time.time())
+        time_to_live = int(token.get("exp")) - current_time
+        jti = token.get(settings.SIMPLE_JWT["JTI_CLAIM"])
+        user_id = token.get("user_id")
+        self.redis_db.setex_jti(jti, time_to_live, user_id)
 
-        return Response(status=status.HTTP_200_OK)
+    def validate_and_blacklist_refresh_token(self, token):
+        serializer = self.get_serializer(data={'token': token})
+
+        if not serializer.is_valid():
+            return Response({"message": "Refresh token is expired or is already blacklisted."},
+                            status=status.HTTP_200_OK)
+
+        refresh_token = serializer.validated_data['token']
+        self.add_to_blacklist(refresh_token)
+
+    def post(self, request):
+        self.add_to_blacklist(request.data["access"])
+        refresh_token = request.data.get("refresh", None)
+
+        if not refresh_token:
+            return Response({
+                "error": "Invalid request",
+                "message": "Refresh token was not provided, and the access token is already blacklisted."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        self.validate_and_blacklist_refresh_token(refresh_token)
+        return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
