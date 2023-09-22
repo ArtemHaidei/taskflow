@@ -87,7 +87,7 @@ ROOT_URLCONF = 'taskflow.urls'
 
 # REDIS settings
 REDIS_PASSWORD = env('REDIS_PASSWORD')
-LOCAL_REDIS_HOST = env('LOCAL_REDIS_HOST')
+REDIS_HOST = env('LOCAL_REDIS_HOST')
 REDIS_PORT = env.int('REDIS_PORT')
 REDIS_TOKENS_DB = env.int('REDIS_TOKENS_DB')
 
@@ -114,7 +114,7 @@ SIMPLE_JWT = {
 
     "AUTH_TOKEN_CLASSES": (
                             "rest_framework_simplejwt.tokens.AccessToken",
-                            'taskflow.custom_refresh_token.RefreshToken'
+                            'login.custom_refresh_token.RefreshToken'
                             ),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "users.models.User",

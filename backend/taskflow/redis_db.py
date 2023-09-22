@@ -1,16 +1,14 @@
 import redis
+from redis.exceptions import ConnectionError
 
 from django.conf import settings
 
 
 class RedisConnectionDB:
-    def __init__(self, db=None):
-        if not db or not isinstance(db, int):
-            raise ValueError("Invalid db number")
-
-        self.client = redis.Redis(host=settings.LOCAL_REDIS_HOST,
+    def __init__(self):
+        #TODO: add host
+        self.client = redis.Redis(host='redis-taskflow',
                                   port=settings.REDIS_PORT,
-                                  db=db,
                                   password=settings.REDIS_PASSWORD)
 
     def setex_jti(self, jti, token_ttl, user_id):

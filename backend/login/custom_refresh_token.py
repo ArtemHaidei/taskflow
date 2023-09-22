@@ -1,4 +1,6 @@
-from rest_framework_simplejwt.tokens import Token, AccessToken
+import time
+
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.conf import settings
 from typing import Any, Dict
 
@@ -6,64 +8,58 @@ from rest_framework_simplejwt.exceptions import TokenError
 from taskflow.redis_db import RedisConnectionDB
 
 
-class BlacklistMixin:
+class CustomBlacklistMixin:
     """
     Custom Mixin that adds blacklist methods to a token.
     Redis is used as a database for storing tokens.
     """
     payload: Dict[str, Any]
 
-    def verify(self) -> None:
-        self.check_blacklist()
+    def verify(self) -> bool:
+        return not self.check_blacklist()
 
-    def check_blacklist(self) -> None:
+    def check_blacklist(self) -> bool:
         """
         Verifies whether this token exists in the token blacklist and raises a TokenError if it does.
         """
-        client = RedisConnectionDB(db=getattr(settings, 'REDIS_TOKENS_DB', 0))
+        client = RedisConnectionDB()
         jti = self.payload[settings.SIMPLE_JWT["JTI_CLAIM"]]
         if client.check_jti(jti):
-            raise TokenError("Token is in blacklist")
+            return True
+        return False
 
     def blacklist(self) -> None:
         """
         Verifies the token's absence from the blacklist; if found, a TokenError is raised.
         Otherwise, the token is added to the blacklist.
         """
-        client = RedisConnectionDB(db=getattr(settings, 'REDIS_TOKENS_DB', 0))
+        client = RedisConnectionDB()
         jti = self.payload[settings.JTI_CLAIM]
-        exp = self.payload["exp"]
 
         if client.check_jti(jti):
             raise TokenError("Token is in blacklist")
 
-        client.setex_jti(jti, exp, self.payload["user_id"])
+        exp = self.payload["exp"]
+
+        current_time = int(time.time())
+        time_to_live = int(exp) - current_time
+        user_id = int(self.payload["user_id"])
+
+        client.setex_jti(jti, time_to_live, user_id)
+
+    @classmethod
+    def for_user(cls):
+        pass
 
 
-class RefreshToken(BlacklistMixin, Token):
+class CustomAccessToken(AccessToken, CustomBlacklistMixin):
+    """
+    Custom Access Token with blacklist support
+    """
+
+
+class CustomRefreshToken(RefreshToken, CustomBlacklistMixin):
     """
     Custom Refresh Token
     """
-    token_type = "refresh"
-    lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
-    no_copy_claims = (
-        settings.SIMPLE_JWT['TOKEN_TYPE_CLAIM'],
-        "exp",
-        settings.SIMPLE_JWT['JTI_CLAIM'],
-        "jti",
-    )
-
-    access_token_class = AccessToken
-
-    @property
-    def access_token(self) -> AccessToken:
-        access = self.access_token_class()
-        access.set_exp(from_time=self.current_time)
-
-        no_copy = self.no_copy_claims
-        for claim, value in self.payload.items():
-            if claim in no_copy:
-                continue
-            access[claim] = value
-
-        return access
+    access_token_class = CustomAccessToken

@@ -23,7 +23,6 @@ class UserDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
 
-# TODO: Implement UserVerifyEmailView and UserResetPasswordView
 class UserVerifyEmailView(generics.GenericAPIView):
     @staticmethod
     def get(request):
@@ -42,6 +41,7 @@ class UserVerifyEmailView(generics.GenericAPIView):
         return Response({'detail': 'User does not exist!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# TODO: Implement UserResetPasswordView
 class UserResetPasswordView(generics.GenericAPIView):
     serializer_class = UserEmailPasswordSerializer
 
