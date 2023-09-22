@@ -64,7 +64,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'taskflow.authentication.CustomJWTAuthentication',
     ),
     "DEFAULT_PARSER_CLASSES": (
         "rest_framework.parsers.JSONParser",
@@ -113,8 +114,8 @@ SIMPLE_JWT = {
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 
     "AUTH_TOKEN_CLASSES": (
-                            "rest_framework_simplejwt.tokens.AccessToken",
-                            'login.custom_refresh_token.RefreshToken'
+                            "login.custom_tokens.CustomAccessToken",
+                            'login.custom_tokens.CustomRefreshToken'
                             ),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "users.models.User",

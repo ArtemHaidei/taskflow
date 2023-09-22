@@ -34,10 +34,10 @@ class CustomBlacklistMixin:
         Otherwise, the token is added to the blacklist.
         """
         client = RedisConnectionDB()
-        jti = self.payload[settings.JTI_CLAIM]
+        jti = self.payload[settings.SIMPLE_JWT["JTI_CLAIM"]]
 
         if client.check_jti(jti):
-            raise TokenError("Token is in blacklist")
+            raise TokenError(f"{self.payload[settings.SIMPLE_JWT['TOKEN_TYPE_CLAIM']]} token is in blacklist")
 
         exp = self.payload["exp"]
 
@@ -48,8 +48,12 @@ class CustomBlacklistMixin:
         client.setex_jti(jti, time_to_live, user_id)
 
     @classmethod
-    def for_user(cls):
-        pass
+    def for_user(cls, user):
+        """
+        Rewrite for_user.
+        """
+        token = super().for_user(user)  # type: ignore
+        return token
 
 
 class CustomAccessToken(AccessToken, CustomBlacklistMixin):
@@ -58,7 +62,7 @@ class CustomAccessToken(AccessToken, CustomBlacklistMixin):
     """
 
 
-class CustomRefreshToken(RefreshToken, CustomBlacklistMixin):
+class CustomRefreshToken(CustomBlacklistMixin, RefreshToken):
     """
     Custom Refresh Token
     """

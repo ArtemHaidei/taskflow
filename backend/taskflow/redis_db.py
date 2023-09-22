@@ -1,12 +1,11 @@
 import redis
-from redis.exceptions import ConnectionError
 
 from django.conf import settings
 
 
 class RedisConnectionDB:
     def __init__(self):
-        #TODO: add host
+        # TODO: add host
         self.client = redis.Redis(host='redis-taskflow',
                                   port=settings.REDIS_PORT,
                                   password=settings.REDIS_PASSWORD)
@@ -19,7 +18,7 @@ class RedisConnectionDB:
         jti_claim = settings.SIMPLE_JWT['JTI_CLAIM']
         jti_result = self.client.get(f"{jti_claim}:{jti}")
         if jti_result:
-            return jti_result.decode("utf-8")
+            return jti_result.decode("utf-8")  # type: ignore
 
     def check_jti(self, jti):
         jti_claim = settings.SIMPLE_JWT['JTI_CLAIM']

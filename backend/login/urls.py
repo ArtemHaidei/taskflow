@@ -1,5 +1,5 @@
 from django.urls import path
-from login.views import (CustomTokenRefreshView,
+from login.views import (CustomTokenAccessRefreshView,
                          CustomTokenVerifyView,
                          UserLoginTokenPairView,
                          UserLogoutView)
@@ -7,6 +7,6 @@ from login.views import (CustomTokenRefreshView,
 urlpatterns = [
     path("token/", UserLoginTokenPairView.as_view(), name='token'),
     path("token/destroy/", UserLogoutView.as_view(), name='token-destroy'),
-    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
-    path('token/verify/', CustomTokenVerifyView.as_view(), name='token_verify')
+    path('token/refresh/', CustomTokenAccessRefreshView.as_view(), name='token-refresh'),
+    path('token/verify/', CustomTokenVerifyView.as_view(), name='token-verify')
 ]

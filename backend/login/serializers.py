@@ -2,8 +2,9 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import UntypedToken
-from login.custom_refresh_token import CustomRefreshToken, CustomAccessToken
+from login.custom_tokens import CustomRefreshToken, CustomAccessToken
 from taskflow.redis_db import RedisConnectionDB
+from rest_framework_simplejwt.exceptions import TokenError
 
 
 class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
@@ -34,35 +35,37 @@ class TokenLogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
     def validate(self, data):
+        response = {
+                "message": 'Successfully logged out.',
+                "access": "Access token is added to blacklist.",
+                "refresh": "Refresh token is added to blacklist."
+            }
+
         access = CustomAccessToken(data["access"])
-        if access.verify():
-            access.blacklist()
+        access.blacklist()
 
         refresh_token = data.get("refresh", None)
         if not refresh_token:
-            return {"message": "Refresh token is expired or is already blacklisted."}
+            response["refresh"] = "Refresh token is required."
+            return data
 
         refresh = CustomRefreshToken(refresh_token)
-        if refresh.verify():
+        if not refresh.check_blacklist():
             refresh.blacklist()
+            return response
 
-        return {'message': 'Successfully logged out.'}
+        response["refresh"] = "Refresh token is already in blacklist."
+        return response
 
 
-class TokenRefreshSerializer(serializers.Serializer):
+class TokenAccessRefreshSerializer(serializers.Serializer):
     refresh = serializers.CharField()
-    access = serializers.CharField(read_only=True)
     token_class = CustomRefreshToken
 
     def validate(self, data) -> dict[str, str]:
         refresh = self.token_class(data["refresh"])
 
-        data = {"access": str(refresh.access_token)}
+        if refresh.check_blacklist():
+            return {"message": "Refresh token is in blacklisted."}
 
-        refresh.set_jti()
-        refresh.set_exp()
-        refresh.set_iat()
-
-        data["refresh"] = str(refresh)
-
-        return data
+        return {"access": str(refresh.access_token)}
