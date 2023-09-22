@@ -1,17 +1,26 @@
 import time
 
 from rest_framework import generics, status
-from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from login.serializers import TokenVerifySerializer, AuthUserTokenPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from login.serializers import (TokenVerifySerializer,
+                               AuthUserTokenPairSerializer,
+                               TokenRefreshSerializer)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.conf import settings
 from taskflow.redis_db import RedisConnectionDB
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = TokenRefreshSerializer
+
+
+class CustomTokenVerifyView(generics.GenericAPIView):
+    serializer_class = TokenVerifySerializer
 
 
 class UserLoginTokenPairView(TokenObtainPairView):
