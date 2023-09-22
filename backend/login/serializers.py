@@ -4,7 +4,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import UntypedToken
 from login.custom_tokens import CustomRefreshToken, CustomAccessToken
 from taskflow.redis_db import RedisConnectionDB
-from rest_framework_simplejwt.exceptions import TokenError
 
 
 class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
@@ -18,23 +17,23 @@ class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
 class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField(write_only=True)
 
-    def validate(self, data):
+    def validate(self, data) -> dict:
         token = UntypedToken(token=data["token"], verify=True)
         jti = token.get(settings.SIMPLE_JWT["JTI_CLAIM"])
 
         redis_db = RedisConnectionDB()
 
         if redis_db.check_jti(jti):
-            raise serializers.ValidationError("Token is in blacklist")
+            return {'message': "Token is in blacklist"}
 
-        return {}
+        return {'message': 'Token is valid.'}
 
 
 class TokenLogoutSerializer(serializers.Serializer):
     access = serializers.CharField(required=True)
     refresh = serializers.CharField()
 
-    def validate(self, data):
+    def validate(self, data) -> dict[str, str]:
         response = {
                 "message": 'Successfully logged out.',
                 "access": "Access token is added to blacklist.",

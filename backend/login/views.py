@@ -1,14 +1,11 @@
-import time
-
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
-from taskflow.custom_permissions import IsNotBlacklisted
 from rest_framework.response import Response
 from login.serializers import (TokenVerifySerializer,
                                AuthUserTokenPairSerializer,
                                TokenAccessRefreshSerializer,
                                TokenLogoutSerializer)
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -18,7 +15,7 @@ class CustomTokenAccessRefreshView(TokenRefreshView):
     serializer_class = TokenAccessRefreshSerializer
 
 
-class CustomTokenVerifyView(generics.GenericAPIView):
+class CustomTokenVerifyView(TokenVerifyView):
     serializer_class = TokenVerifySerializer
 
 
