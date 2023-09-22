@@ -1,9 +1,6 @@
-from django.conf import settings
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.tokens import UntypedToken
-from login.custom_tokens import CustomRefreshToken, CustomAccessToken
-from taskflow.redis_db import RedisConnectionDB
+from login.custom_tokens import CustomRefreshToken, CustomAccessToken, CustomUntypedToken
 
 
 class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
@@ -18,12 +15,8 @@ class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField(write_only=True)
 
     def validate(self, data) -> dict:
-        token = UntypedToken(token=data["token"], verify=True)
-        jti = token.get(settings.SIMPLE_JWT["JTI_CLAIM"])
-
-        redis_db = RedisConnectionDB()
-
-        if redis_db.check_jti(jti):
+        token = CustomUntypedToken(token=data["token"], verify=True)
+        if token.check_blacklist():
             return {'message': "Token is in blacklist"}
 
         return {'message': 'Token is valid.'}

@@ -1,6 +1,6 @@
 import time
-
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from datetime import timedelta
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken, UntypedToken
 from django.conf import settings
 from typing import Any, Dict
 
@@ -58,12 +58,18 @@ class CustomBlacklistMixin:
 
 class CustomAccessToken(AccessToken, CustomBlacklistMixin):
     """
-    Custom Access Token with blacklist support
+    Rewrite Access Token with blacklist support
     """
 
 
 class CustomRefreshToken(CustomBlacklistMixin, RefreshToken):
     """
-    Custom Refresh Token
+    Rewrite Refresh Token
     """
     access_token_class = CustomAccessToken
+
+
+class CustomUntypedToken(CustomBlacklistMixin, UntypedToken):
+    """
+    Rewrite Untyped Token
+    """
