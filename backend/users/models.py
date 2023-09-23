@@ -1,18 +1,21 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+
 from emailsend.emailsend import EmailSender
 
 
 class MyUserManager(BaseUserManager):
     def _create_user(self, email, password=None, **extra_fields):
-        """Creates and saves a User with the given email and password."""
+        """Create and save a User with the given email and password."""
         if not email:
-            raise ValueError('The Email field must be set')
+            msg = "The Email field must be set"
+            raise ValueError(msg)
 
         email = self.normalize_email(email)
 
         if not password:
-            raise ValueError("The Password field must be set")
+            msg = "The Password field must be set"
+            raise ValueError(msg)
 
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -37,7 +40,7 @@ class User(AbstractBaseUser):
     temp_email = models.EmailField("temporary email", blank=True)
     name = models.CharField(max_length=30)
     phone_number = models.CharField("phone", max_length=30, blank=True)
-    is_active = models.BooleanField('is_active', default=False)
+    is_active = models.BooleanField("is_active", default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -46,14 +49,14 @@ class User(AbstractBaseUser):
 
     objects = MyUserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []  # noqa
 
     class Meta:
         verbose_name = "user"
         verbose_name_plural = "users"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email
 
     def send_verify_email(self):

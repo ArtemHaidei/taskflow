@@ -1,10 +1,12 @@
-from rest_framework import generics, status
+from rest_framework import generics
 
-from tasks.models import Task, Category
-from tasks.serializers import (TaskSerializer,
-                               CategorySerializer,
-                               TaskCreateSerializer,
-                               CategoryCreateSerializer)
+from tasks.models import Category, Task
+from tasks.serializers import (
+    CategoryCreateSerializer,
+    CategorySerializer,
+    TaskCreateSerializer,
+    TaskSerializer,
+)
 
 
 class TasksListView(generics.ListAPIView):

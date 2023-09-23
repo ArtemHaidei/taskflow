@@ -1,49 +1,52 @@
 from django.urls import path
 
-from tasks.views import (TasksListView,
-                         TaskCreateView,
-                         TaskRetrieveUpdateDestroyView,
-                         CategoriesListView
-                         )
+from tasks.views import (
+    CategoriesListView,
+    CategoryCreateView,
+    CategoryRetrieveUpdateDestroyView,
+    TaskCreateView,
+    TaskRetrieveUpdateDestroyView,
+    TasksListView,
+)
 
 urlpatterns = [
-    path('tasks/',
+    path("tasks/",
          TasksListView.as_view(),
-         name='tasks-list'),
+         name="tasks-list"),
 
-    path('task/create/',
+    path("task/create/",
          TaskCreateView.as_view(),
-         name='task-create'),
+         name="task-create"),
 
-    path('task/<int:pk>/',
+    path("task/<int:pk>/",
          TaskRetrieveUpdateDestroyView.as_view(),
-         name='task-detail'),
+         name="task-detail"),
 
-    path('task/<int:pk>/update',
+    path("task/<int:pk>/update/",
          TaskRetrieveUpdateDestroyView.as_view(),
-         name='task-update'),
+         name="task-update"),
 
-    path('task/delete/<int:pk>/',
+    path("task/delete/<int:pk>/",
          TaskRetrieveUpdateDestroyView.as_view(),
-         name='task-delete'),
+         name="task-delete"),
 
-    path('categories/',
+    path("categories/",
          CategoriesListView.as_view(),
-         name='category-list'),
+         name="category-list"),
 
-    path('category/create/',
-         CategoriesListView.as_view(),
-         name='category-create'),
+    path("category/create/",
+         CategoryCreateView.as_view(),
+         name="category-create"),
 
-    path('category/<int:pk>/',
-         CategoriesListView.as_view(),
-         name='category-detail'),
+    path("category/<int:pk>/",
+         CategoryRetrieveUpdateDestroyView.as_view(),
+         name="category-detail"),
 
-    path('category/<int:pk>/update',
-         CategoriesListView.as_view(),
-         name='category-update'),
+    path("category/<int:pk>/update/",
+         CategoryRetrieveUpdateDestroyView.as_view(),
+         name="category-update"),
 
-    path('category/delete/<int:pk>/',
-         CategoriesListView.as_view(),
-         name='category-delete'),
+    path("category/delete/<int:pk>/",
+         CategoryRetrieveUpdateDestroyView.as_view(),
+         name="category-delete"),
 ]

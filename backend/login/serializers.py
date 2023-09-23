@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from login.custom_tokens import CustomRefreshToken, CustomAccessToken, CustomUntypedToken
+
+from login.custom_tokens import (
+    CustomAccessToken,
+    CustomRefreshToken,
+    CustomUntypedToken,
+)
 
 
 class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
@@ -8,7 +13,7 @@ class AuthUserTokenPairSerializer(TokenObtainPairSerializer):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.fields['email'] = serializers.EmailField(required=True)
+        self.fields["email"] = serializers.EmailField(required=True)
 
 
 class TokenVerifySerializer(serializers.Serializer):
@@ -17,9 +22,9 @@ class TokenVerifySerializer(serializers.Serializer):
     def validate(self, data) -> dict:
         token = CustomUntypedToken(token=data["token"], verify=True)
         if token.check_blacklist():
-            return {'message': "Token is in blacklist"}
+            return {"message": "Token is in blacklist"}
 
-        return {'message': 'Token is valid.'}
+        return {"message": "Token is valid."}
 
 
 class TokenLogoutSerializer(serializers.Serializer):
@@ -28,9 +33,9 @@ class TokenLogoutSerializer(serializers.Serializer):
 
     def validate(self, data) -> dict[str, str]:
         response = {
-                "message": 'Successfully logged out.',
+                "message": "Successfully logged out.",
                 "access": "Access token is added to blacklist.",
-                "refresh": "Refresh token is added to blacklist."
+                "refresh": "Refresh token is added to blacklist.",
             }
 
         access = CustomAccessToken(data["access"])
