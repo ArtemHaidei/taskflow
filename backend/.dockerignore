@@ -1,0 +1,26 @@
+# Byte-Code
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# databases
+.db
+
+# git
+.git/
+.gitignore
+
+# PyCharm
+.idea/
+
+# local settings
+.env
+.env.template
+
+# virtualenv
+venv/
+env/
+
+# info
+README.md
