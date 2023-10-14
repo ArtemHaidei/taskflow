@@ -56,7 +56,7 @@ class User(AbstractBaseUser):
         verbose_name = "user"
         verbose_name_plural = "users"
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.email
 
     def send_verify_email(self):
