@@ -1,9 +1,27 @@
 services:
+  postgres-db:
+    image: postgres:16
+    container_name: "postgres-db"
+    restart: always
+    expose:
+      - ${SQL_PORT}
+    ports:
+      - ${SQL_PORT}:${SQL_PORT}
+    env_file:
+      - ./backend/.env
+    environment:
+      - POSTGRES_DB=${SQL_DATABASE}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: -p ${SQL_PORT}
+
   redis-taskflow:
     image: "redis:7.0"
     container_name: "redis-taskflow"
     ports:
-      - ${LOCAL_REDIS_HOST}:${REDIS_PORT}:${REDIS_PORT}
+      - ${LOCAL_HOST}:${REDIS_PORT}:${REDIS_PORT}
     volumes:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
       - redis-data:/data
@@ -13,19 +31,28 @@ services:
 
   backend-taskflow:
     image: backend-taskflow:dev
+    container_name: "backend-taskflow"
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: "backend-taskflow"
     ports:
       - "8000:8000"
     volumes:
       - /Users/artemhaidei/Desktop/TaskFlow/taskflow/backend:/backend:ro
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file:
       - ./backend/.env
     depends_on:
       - redis-taskflow
+      - postgres-db
+
+  adminer-postgres:
+    image: adminer
+    container_name: "adminer-db"
+    restart: always
+    ports:
+      - "8080:8080"
 
 volumes:
   redis-data:
+  postgres_data:
