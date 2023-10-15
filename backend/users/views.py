@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from users.serializers import (
     CreateUserSerializer,
@@ -13,16 +14,21 @@ User = get_user_model()
 
 
 class UserCreateView(generics.CreateAPIView):
+    permission_classes = (IsAuthenticated, )
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
 
 
+
+
 class UserListView(generics.ListAPIView):
+    permission_classes = (IsAdminUser, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class UserDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
