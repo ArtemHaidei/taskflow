@@ -19,15 +19,25 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
 
 
-
-
 class UserListView(generics.ListAPIView):
     permission_classes = (IsAdminUser, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+class UserRetriveView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated, )
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserUpdateView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated, )
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDestroyView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = User.objects.all()
     serializer_class = UserSerializer

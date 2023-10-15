@@ -3,9 +3,13 @@ from django.urls import path
 from tasks.views import (
     CategoriesListView,
     CategoryCreateView,
-    CategoryRetrieveUpdateDestroyView,
+    CategoryRetrieveView,
+    CategoryUpdateView,
+    CategoryDestroyView,
     TaskCreateView,
-    TaskRetrieveUpdateDestroyView,
+    TaskRetrieveView,
+    TaskUpdateView,
+    TaskDestroyView,
     TasksListView,
 )
 
@@ -19,15 +23,15 @@ urlpatterns = [
          name="task-create"),
 
     path("task/<int:pk>/",
-         TaskRetrieveUpdateDestroyView.as_view(),
+         TaskRetrieveView.as_view(),
          name="task-detail"),
 
     path("task/<int:pk>/update/",
-         TaskRetrieveUpdateDestroyView.as_view(),
+         TaskUpdateView.as_view(),
          name="task-update"),
 
-    path("task/delete/<int:pk>/",
-         TaskRetrieveUpdateDestroyView.as_view(),
+    path("task/<int:pk>/delete/",
+         TaskDestroyView.as_view(),
          name="task-delete"),
 
     path("categories/",
@@ -39,14 +43,14 @@ urlpatterns = [
          name="category-create"),
 
     path("category/<int:pk>/",
-         CategoryRetrieveUpdateDestroyView.as_view(),
+         CategoryRetrieveView.as_view(),
          name="category-detail"),
 
     path("category/<int:pk>/update/",
-         CategoryRetrieveUpdateDestroyView.as_view(),
+         CategoryUpdateView.as_view(),
          name="category-update"),
 
-    path("category/delete/<int:pk>/",
-         CategoryRetrieveUpdateDestroyView.as_view(),
+    path("category/<int:pk>/delete/",
+         CategoryDestroyView.as_view(),
          name="category-delete"),
 ]

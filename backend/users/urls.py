@@ -2,7 +2,9 @@ from django.urls import path
 
 from users.views import (
     UserCreateView,
-    UserDetailUpdateDeleteView,
+    UserRetriveView,
+    UserUpdateView,
+    UserDestroyView,
     UserListView,
     UserVerifyEmailView,
 )
@@ -20,17 +22,17 @@ urlpatterns = [
     ),
     path(
         "user/<int:pk>/",
-        UserDetailUpdateDeleteView.as_view(),
+        UserRetriveView.as_view(),
         name="user-detail",
     ),
     path(
         "user/<int:pk>/update/",
-        UserDetailUpdateDeleteView.as_view(),
+        UserUpdateView.as_view(),
         name="user-update",
     ),
     path(
-        "delete/<int:pk>/",
-        UserDetailUpdateDeleteView.as_view(),
+        "<int:pk>/delete/",
+        UserDestroyView.as_view(),
         name="user-delete",
     ),
     path(

@@ -24,7 +24,19 @@ class TaskCreateView(generics.CreateAPIView):
     serializer_class = TaskCreateSerializer
 
 
-class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class TaskRetrieveView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+
+class TaskUpdateView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+
+class TaskDestroyView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -44,7 +56,19 @@ class CategoryCreateView(generics.CreateAPIView):
     serializer_class = CategoryCreateSerializer
 
 
-class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class CategoryRetrieveView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryUpdateView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryDestroyView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
