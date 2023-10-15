@@ -40,7 +40,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer(many=True)
+    category = CategorySerializer(many=True, required=False)
 
     class Meta:
         model = Task

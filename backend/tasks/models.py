@@ -7,13 +7,13 @@ User = get_user_model()
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, default="")
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="categories",
+        related_name="category",
     )
 
     def __str__(self):
@@ -24,7 +24,7 @@ class Task(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="tasks",
+        related_name="task",
     )
     title = models.CharField(max_length=255)
 
@@ -34,7 +34,7 @@ class Task(models.Model):
         default=TaskStatus.NONE,
     )
 
-    category = models.ManyToManyField(Category, related_name="categories")
+    category = models.ManyToManyField(Category, related_name="category")
     description = models.TextField(blank=True, default="")
     if_description = models.BooleanField(default=False)
     is_done = models.BooleanField(default=False)
@@ -43,7 +43,7 @@ class Task(models.Model):
     priority = models.CharField(
         max_length=20,
         choices=TaskPriority.choices,
-        default="Low",
+        default=TaskPriority.LOW,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

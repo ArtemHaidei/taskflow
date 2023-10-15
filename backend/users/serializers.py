@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ("password", "is_staff", "is_superuser")
+        exclude = ("password", "is_superuser")
 
 
 class CreateUserSerializer(serializers.ModelSerializer):

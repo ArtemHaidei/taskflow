@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
 
 from tasks.models import Category, Task
 from tasks.serializers import (
@@ -13,6 +14,9 @@ from tasks.serializers import (
 class TasksListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = TaskSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'status']
+    ordering_fields = ['created_at', 'deadline_at']
 
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
@@ -45,6 +49,9 @@ class TaskDestroyView(generics.DestroyAPIView):
 class CategoriesListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CategorySerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
 
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
