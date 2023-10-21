@@ -8,6 +8,7 @@ from tasks.serializers import (
     CategorySerializer,
     TaskCreateSerializer,
     TaskSerializer,
+    TaskUpdateSerializer,
 )
 
 
@@ -37,7 +38,7 @@ class TaskRetrieveView(generics.RetrieveAPIView):
 class TaskUpdateView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+    serializer_class = TaskUpdateSerializer
 
 
 class TaskDestroyView(generics.DestroyAPIView):
@@ -54,7 +55,7 @@ class CategoriesListView(generics.ListAPIView):
     ordering_fields = ['name']
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        return Category.objects.filter(user=self.request.user)
 
 
 class CategoryCreateView(generics.CreateAPIView):

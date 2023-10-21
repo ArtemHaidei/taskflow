@@ -8,8 +8,6 @@ User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, default="")
-
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -36,10 +34,7 @@ class Task(models.Model):
 
     category = models.ManyToManyField(Category, related_name="category")
     description = models.TextField(blank=True, default="")
-    if_description = models.BooleanField(default=False)
     is_done = models.BooleanField(default=False)
-    deadline = models.DateTimeField(blank=True, null=True)
-
     priority = models.CharField(
         max_length=20,
         choices=TaskPriority.choices,
@@ -52,3 +47,25 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+    def set_if_different(self, key, value):
+        current_value = getattr(self, key, None)
+        if current_value != value:
+            setattr(self, key, value)
+            self.save()
+
+    def add_category(self, user: User, categories: list) -> None:
+        if len(categories) > 0:
+            for category in categories:
+                category_obj, _ = Category.objects.get_or_create(
+                    name=category,
+                    user=user,
+                )
+                self.category.add(category_obj)
+
+    def remove_category(self, categories: list) -> None:
+        if len(categories) > 0:
+            for category in categories:
+                category_obj = Category.objects.filter(name=category).first()
+                if category_obj:
+                    self.category.remove(category_obj)
